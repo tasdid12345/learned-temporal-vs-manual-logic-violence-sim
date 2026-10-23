@@ -1,0 +1,35 @@
+{
+  "question": "Can a class-balanced LightGBM on learned temporal summary features of compact frame embeddings beat a hand-rule plus recurrent-style sequence baseline at detecting violent clips on held-out clips from an unseen simulated camera?",
+  "method": "Simulated 30-frame clips of 128-d frame embeddings (VGG19 stand-in) from 40 cameras with own background offset/noise; test = 25% held-out cameras. Baseline: per-frame MLP scorer + fixed hand rule + MLP head on frame scores. Improved: PCA(16) + temporal/per-camera-normalised features + CV-tuned class-balanced LightGBM.",
+  "dataset": {
+    "name": "Simulated camera frame-embedding clips (seeded NumPy)",
+    "source_url": "none (generated in analysis.py)",
+    "n_rows": 1200,
+    "n_train": 900,
+    "n_test": 300,
+    "same_as_paper": false,
+    "baseline_is_papers_method": false
+  },
+  "metric_name": "Violent-class F1 on held-out-camera test clips (mean of seeds 42-44)",
+  "higher_is_better": true,
+  "baseline": "Per-frame sklearn MLP scorer (clip label on every frame), fixed hand rule (>=10 frames with score>0.5), and an MLP head on the 30 concatenated frame scores plus rule flag (stand-in for LSTM/Bi-LSTM).",
+  "improved": "Replaces the frame scorer/rules/MLP head by PCA(16) embeddings, frame-difference, max/std/burst-length and per-camera-normalised features, fed to a class-balanced LightGBM tuned by grouped-by-camera CV on training data.",
+  "metrics": {
+    "baseline_score": 0.2123255497292299,
+    "improved_score": 0.9530543867851021,
+    "improvement": 0.7407288370558722,
+    "baseline_score_std": 0.053234582094278594,
+    "improved_score_std": 0.00523763353225928,
+    "baseline_f1": 0.2123255497292299,
+    "improved_f1": 0.9530543867851021,
+    "baseline_auc": 0.5765813134234187,
+    "improved_auc": 0.9970205233363129,
+    "baseline_auc_std": 0.012836241532014769,
+    "improved_auc_std": 0.0001935846787806908,
+    "baseline_ms_per_clip": 0.010021927777772692,
+    "improved_ms_per_clip": 0.016670022222224173,
+    "hand_rule_only_f1": 0.4555121768607832,
+    "test_violent_fraction": 0.30333333333333334
+  },
+  "notes": "Synthetic data: results reflect the simulator's assumptions (burst + small shift, camera offsets), not real video. Baseline hyper-parameters are fixed by hand while LightGBM gets a small CV grid. The improved model uses per-camera normalisation computed from the unlabeled clips of each camera (including test cameras), which the baseline does not get; this is part of the method but advantages it. Decision threshold 0.5 for both. Test set used once per model/seed; frame scores for the baseline head are out-of-fold by camera."
+}
