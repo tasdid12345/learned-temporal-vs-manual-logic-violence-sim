@@ -24,6 +24,32 @@ python analysis.py
 ## Results
 Results are written to `results.json` (and a chart to `figures/`).
 
+## Results (latest run)
+
+On simulated held-out-camera clips (300 test clips), a standard frame-scorer with hand-set rules and an MLP sequence head reached violent-class F1 0.212, versus 0.953 for class-balanced LightGBM on temporal features; the synthetic data and per-camera normalisation caveat this.
+
+| Metric | Value |
+|---|---|
+| baseline_score | 0.2123 |
+| improved_score | 0.9531 |
+| improvement | 0.7407 |
+| baseline_score_std | 0.05323 |
+| improved_score_std | 0.005238 |
+| baseline_f1 | 0.2123 |
+| improved_f1 | 0.9531 |
+| baseline_auc | 0.5766 |
+| improved_auc | 0.997 |
+| baseline_auc_std | 0.01284 |
+| improved_auc_std | 0.0001936 |
+| baseline_ms_per_clip | 0.01002 |
+| improved_ms_per_clip | 0.01667 |
+| hand_rule_only_f1 | 0.4555 |
+| test_violent_fraction | 0.3033 |
+
+Run on 2026-10-23. Full output: [results.json](results.json) · [run.log](run.log)
+
+Notes: Synthetic data: results reflect the simulator's assumptions (burst + small shift, camera offsets), not real video. Baseline hyper-parameters are fixed by hand while LightGBM gets a small CV grid. The improved model uses per-camera normalisation computed from the unlabeled clips of each camera (including test cameras), which the baseline does not get; this is part of the method but advantages it. Decision threshold 0.5 for both. Test set used once per model/seed; frame scores for the baseline head are out-of-fold by camera.
+
 ## Reference
 
 This project is motivated by the following paper:
